@@ -71,7 +71,7 @@ private:
 class UnifiedBus
 {
 public:
-    static UnifiedBus& get_instance();
+    UnifiedBus();
     ~UnifiedBus();
 
     // ================================ Publish ================================
@@ -101,6 +101,9 @@ public:
     [[nodiscard]] std::error_code subscribe(const std::string& topic,
                                             std::function<void(const std::string&)> callback);
 
+    // Explicit shutdown for deterministic teardown (threads, zmq context).
+    void shutdown();
+
     /**
      * @brief 订阅二进制数据，队列句柄模式
      * @return 返回队列句柄，消费者直接从队列 pop 数据
@@ -119,8 +122,6 @@ public:
     UnifiedBus& operator=(UnifiedBus&&) = delete;
 
 private:
-    UnifiedBus();
-
     // 辅助的非模板接口，用于 Pimpl 桥接
     void publish_stream_impl(const std::string& topic, std::shared_ptr<void> data);
 

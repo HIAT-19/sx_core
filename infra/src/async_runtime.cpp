@@ -114,13 +114,8 @@ struct AsyncRuntime::Impl {
     }
 };
 
-AsyncRuntime& AsyncRuntime::instance() {
-    static AsyncRuntime inst;
-    return inst;
-}
-
 AsyncRuntime::AsyncRuntime() : pImpl_(std::make_unique<Impl>()) {}
-AsyncRuntime::~AsyncRuntime() = default;
+AsyncRuntime::~AsyncRuntime() { stop(); }
 
 void AsyncRuntime::init(std::shared_ptr<sx::hal::IThreadScheduler> scheduler, std::size_t io_n, std::size_t cpu_n) {
     if (io_n == 0U) io_n = 1U;

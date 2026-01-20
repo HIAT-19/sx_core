@@ -2,7 +2,7 @@ add_sx_library(sx_infra
     src/unified_bus.cpp
     src/config_manager.cpp
     src/async_runtime.cpp
-    src/infra_manager.cpp
+    src/infra_service.cpp
     src/logging.cpp
 )
 
@@ -34,7 +34,7 @@ add_sx_test(sx_infra_test
     ut/unified_bus_test.cpp
     ut/config_manager_test.cpp
     ut/async_runtime_test.cpp
-    ut/infra_manager_test.cpp
+    ut/infra_service_test.cpp
     ut/logging_test.cpp
 )
 target_link_libraries(sx_infra_test PRIVATE

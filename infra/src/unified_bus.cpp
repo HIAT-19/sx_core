@@ -216,6 +216,16 @@ public:
         }
     }
 
+    void shutdown() {
+        shutdown_zmq();
+        // best-effort: clear in-process stream topics too
+        std::lock_guard<std::mutex> lock(stream_mutex_);
+        stream_topics_.clear();
+
+        std::lock_guard<std::mutex> c_lock(control_mutex_);
+        control_topics_.clear();
+    }
+
     void publish_stream(const std::string& topic, std::shared_ptr<void> data) {
         std::shared_ptr<StreamTopic> topic_ptr;
         {
@@ -272,11 +282,6 @@ UnifiedBus::Impl::~Impl() {
 
 // ================= UnifiedBus Implementation =================
 
-UnifiedBus& UnifiedBus::get_instance() {
-    static UnifiedBus instance;
-    return instance;
-}
-
 UnifiedBus::UnifiedBus() : impl_(std::make_unique<Impl>()) {}
 UnifiedBus::~UnifiedBus() = default;
 
@@ -286,6 +291,10 @@ std::error_code UnifiedBus::publish(const std::string& topic, const std::string&
 
 std::error_code UnifiedBus::subscribe(const std::string& topic, std::function<void(const std::string&)> callback) {
     return impl_->subscribe_control(topic, std::move(callback));
+}
+
+void UnifiedBus::shutdown() {
+    impl_->shutdown();
 }
 
 void UnifiedBus::publish_stream_impl(const std::string& topic, std::shared_ptr<void> data) {

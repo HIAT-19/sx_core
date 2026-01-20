@@ -172,11 +172,6 @@ struct ConfigManager::Impl {
     }
 };
 
-ConfigManager& ConfigManager::instance() {
-    static ConfigManager inst;
-    return inst;
-}
-
 ConfigManager::ConfigManager() : pImpl_(std::make_unique<Impl>()) {}
 ConfigManager::~ConfigManager() = default;
 

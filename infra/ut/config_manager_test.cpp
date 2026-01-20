@@ -36,7 +36,7 @@ bool WriteFile(const std::string& path, const std::string& contents) {
 }  // namespace
 
 TEST(ConfigManager, BasicTypesDotPathAndDefaults) {
-    auto& cfg = sx::infra::ConfigManager::instance();
+    sx::infra::ConfigManager cfg;
     const std::string path = MakeTempJsonPath("basic");
 
     ASSERT_TRUE(WriteFile(
@@ -83,7 +83,7 @@ TEST(ConfigManager, BasicTypesDotPathAndDefaults) {
 }
 
 TEST(ConfigManager, ReloadNotifiesListeners) {
-    auto& cfg = sx::infra::ConfigManager::instance();
+    sx::infra::ConfigManager cfg;
     const std::string path = MakeTempJsonPath("reload");
 
     ASSERT_TRUE(WriteFile(path, R"({"x":1})"));
@@ -101,7 +101,7 @@ TEST(ConfigManager, ReloadNotifiesListeners) {
 }
 
 TEST(ConfigManager, ThreadSafeReadsDuringReload) {
-    auto& cfg = sx::infra::ConfigManager::instance();
+    sx::infra::ConfigManager cfg;
     const std::string path = MakeTempJsonPath("thread");
 
     ASSERT_TRUE(WriteFile(path, R"({"x":1,"arr":[1,2,3]})"));

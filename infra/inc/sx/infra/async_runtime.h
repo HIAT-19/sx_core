@@ -30,7 +30,7 @@ public:
 
 class AsyncRuntime {
 public:
-    static AsyncRuntime& instance();
+    AsyncRuntime();
     ~AsyncRuntime();
 
     // Inject a platform thread scheduler (nullable). Starts IO/CPU worker threads.
@@ -69,7 +69,6 @@ public:
     }
 
 private:
-    AsyncRuntime();
     AsyncRuntime(const AsyncRuntime&) = delete;
     AsyncRuntime& operator=(const AsyncRuntime&) = delete;
     AsyncRuntime(AsyncRuntime&&) = delete;

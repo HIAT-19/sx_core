@@ -8,8 +8,7 @@
 #include "sx/infra/async_runtime.h"
 
 TEST(AsyncRuntime, PostIoExecutes) {
-    auto& rt = sx::infra::AsyncRuntime::instance();
-    rt.stop();
+    sx::infra::AsyncRuntime rt;
     rt.init(nullptr, 1U, 1U);
 
     std::promise<int> done;
@@ -23,8 +22,7 @@ TEST(AsyncRuntime, PostIoExecutes) {
 }
 
 TEST(AsyncRuntime, PostCpuExecutes) {
-    auto& rt = sx::infra::AsyncRuntime::instance();
-    rt.stop();
+    sx::infra::AsyncRuntime rt;
     rt.init(nullptr, 1U, 2U);
 
     std::promise<void> done;
@@ -37,8 +35,7 @@ TEST(AsyncRuntime, PostCpuExecutes) {
 }
 
 TEST(AsyncRuntime, TimerFiresOnIoPool) {
-    auto& rt = sx::infra::AsyncRuntime::instance();
-    rt.stop();
+    sx::infra::AsyncRuntime rt;
     rt.init(nullptr, 1U, 1U);
 
     auto timer = rt.create_timer();
@@ -58,8 +55,7 @@ TEST(AsyncRuntime, TimerFiresOnIoPool) {
 }
 
 TEST(AsyncRuntime, CpuStrandSerializes) {
-    auto& rt = sx::infra::AsyncRuntime::instance();
-    rt.stop();
+    sx::infra::AsyncRuntime rt;
     rt.init(nullptr, 1U, 4U);
 
     auto ex = rt.create_cpu_strand();
