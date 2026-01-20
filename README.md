@@ -9,7 +9,7 @@ This repo provides a small set of infrastructure building blocks under `sx::infr
 
 ### Key components
 
-- **`sx::infra::InfraManager`**: unified init/shutdown entry point (`init_all()` / `shutdown_all()`).
+- **`sx::infra::InfraService`**: DI-friendly infra container with `init(cfg)` / `shutdown()` managing component lifecycles.
 - **`sx::infra::LogManager` + `sx::infra::ILogger`**: spdlog-backed logging with DI-friendly `ILogger`.
   - Supports **module-level filtering** via logger name (e.g. only enable `"vision"` while disabling others).
 - **`sx::infra::AsyncRuntime`**: dual thread-pool runtime (standalone Asio) with IO/CPU isolation.
@@ -66,7 +66,7 @@ ctest --output-on-failure
 ### Quick start: unified init entrypoint
 
 ```cpp
-#include "sx/infra/infra_manager.h"
+#include "sx/infra/infra_service.h"
 
 int main() {
     sx::infra::InfraConfig cfg;
@@ -85,14 +85,15 @@ int main() {
     // Config (optional)
     cfg.config_path = "/etc/app/config.json";
 
-    if (auto ec = sx::infra::InfraManager::init_all(cfg)) {
+    sx::infra::InfraService infra;
+    if (auto ec = infra.init(cfg)) {
         // handle init error (e.g. logging/config file errors)
         return 1;
     }
 
     // ... application ...
 
-    sx::infra::InfraManager::shutdown_all();
+    infra.shutdown(); // optional (also called in ~InfraService)
     return 0;
 }
 ```
@@ -102,7 +103,7 @@ int main() {
 ```cpp
 #include "sx/infra/logging.h"
 
-auto& lm = sx::infra::LogManager::instance();
+sx::infra::LogManager lm;
 (void)lm.init({});
 
 auto vision_log = lm.get_logger("vision"); // inject into module

@@ -51,7 +51,7 @@ public:
 
 class LogManager {
 public:
-    static LogManager& instance();
+    LogManager();
     ~LogManager();
 
     // Initialize global sinks / defaults. Idempotent.
@@ -74,7 +74,6 @@ public:
     LogManager& operator=(LogManager&&) = delete;
 
 private:
-    LogManager();
     struct Impl;
     std::unique_ptr<Impl> pImpl_;
 };

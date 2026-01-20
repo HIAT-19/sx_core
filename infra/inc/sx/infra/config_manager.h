@@ -11,8 +11,7 @@ class ConfigManager {
 public:
     using UpdateCallback = std::function<void()>;
 
-    // Singleton
-    static ConfigManager& instance();
+    ConfigManager();
 
     // Must be defined in .cpp due to Pimpl unique_ptr incomplete type rule.
     ~ConfigManager();
@@ -51,8 +50,6 @@ public:
     ConfigManager& operator=(ConfigManager&&) = delete;
 
 private:
-    ConfigManager();
-
     struct Impl;
     std::unique_ptr<Impl> pImpl_;
 };

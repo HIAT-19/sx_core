@@ -34,7 +34,7 @@ std::string MakeDataTopic(const std::string& name) {
 }  // namespace
 
 TEST(UnifiedBusDataPlane, MultipleSubscribersSameTopicBroadcast) {
-    auto& bus = sx::infra::UnifiedBus::get_instance();
+    sx::infra::UnifiedBus bus;
     const std::string topic = MakeDataTopic("broadcast");
 
     auto fifo_q = bus.subscribe_stream<int>(topic, sx::types::StreamMode::kReliableFifo);
@@ -58,7 +58,7 @@ TEST(UnifiedBusDataPlane, MultipleSubscribersSameTopicBroadcast) {
 }
 
 TEST(UnifiedBusControlPlane, InprocPublishSubscribeEventuallyDelivers) {
-    auto& bus = sx::infra::UnifiedBus::get_instance();
+    sx::infra::UnifiedBus bus;
     const std::string endpoint = MakeInprocEndpoint("ctrl_basic");
 
     // Bind first (inproc requires bind before connect).
@@ -87,7 +87,7 @@ TEST(UnifiedBusControlPlane, InprocPublishSubscribeEventuallyDelivers) {
 }
 
 TEST(UnifiedBusControlPlane, InprocMultipleCallbacksSameEndpoint) {
-    auto& bus = sx::infra::UnifiedBus::get_instance();
+    sx::infra::UnifiedBus bus;
     const std::string endpoint = MakeInprocEndpoint("ctrl_multi");
 
     ASSERT_FALSE(bus.publish(endpoint, "warmup"));

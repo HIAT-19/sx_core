@@ -75,21 +75,13 @@ struct LogManager::Impl {
             logger->set_level(ToSpdLevel(lit->second));
         }
 
-        // Register into global registry so spdlog::get(name) could also find it.
-        spdlog::register_logger(logger);
-
         loggers.emplace(name, logger);
         return logger;
     }
 };
 
-LogManager& LogManager::instance() {
-    static LogManager inst;
-    return inst;
-}
-
 LogManager::LogManager() : pImpl_(std::make_unique<Impl>()) {}
-LogManager::~LogManager() = default;
+LogManager::~LogManager() { shutdown(); }
 
 std::error_code LogManager::init(const LoggingConfig& cfg) {
     std::lock_guard<std::mutex> lock(pImpl_->mutex);
@@ -154,11 +146,7 @@ void LogManager::shutdown() {
     std::lock_guard<std::mutex> lock(pImpl_->mutex);
     if (!pImpl_->inited) return;
 
-    // Unregister and drop references.
-    for (auto& [name, lg] : pImpl_->loggers) {
-        (void)lg;
-        spdlog::drop(name);
-    }
+    // Drop references.
     pImpl_->loggers.clear();
     pImpl_->levels.clear();
     pImpl_->sink.reset();

@@ -31,9 +31,7 @@ TEST(Logging, PerLoggerLevelControl) {
     cfg.default_level = sx::infra::LogLevel::kInfo;
     cfg.pattern = "[%n] [%l] %v";
 
-    auto& mgr = sx::infra::LogManager::instance();
-    mgr.shutdown();
-
+    sx::infra::LogManager mgr;
     ASSERT_FALSE(mgr.init(cfg));
 
     auto a = mgr.get_logger("a");
