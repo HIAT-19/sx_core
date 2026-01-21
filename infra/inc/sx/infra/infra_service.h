@@ -49,7 +49,7 @@ public:
 
     [[nodiscard]] bool started() const noexcept { return started_; }
 
-    LogManager& logging() { return logging_; }
+    LogManager& logging();
     ConfigManager& config();
     AsyncRuntime& runtime();
     UnifiedBus& bus();
@@ -58,7 +58,7 @@ private:
     bool started_ = false;
     InfraConfig cfg_;
 
-    LogManager logging_;
+    std::unique_ptr<LogManager> logging_;
     std::unique_ptr<ConfigManager> config_;
     std::unique_ptr<AsyncRuntime> runtime_;
     std::unique_ptr<UnifiedBus> bus_;
