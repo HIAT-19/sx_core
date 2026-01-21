@@ -31,6 +31,11 @@ UnifiedBus& InfraService::bus() {
     return *bus_;
 }
 
+LogManager& InfraService::logging() {
+    assert(logging_);
+    return *logging_;
+}
+
 std::error_code InfraService::init(const InfraConfig& cfg) {
     if (started_) return {};
 
@@ -38,7 +43,8 @@ std::error_code InfraService::init(const InfraConfig& cfg) {
 
     // 1) Logging
     if (cfg_.enable_logging) {
-        if (const auto ec = logging_.init(cfg_.logging)) return ec;
+        if (!logging_) logging_ = std::make_unique<LogManager>();
+        if (const auto ec = logging_->init(cfg_.logging)) return ec;
     }
 
     // 2) Runtime
@@ -63,7 +69,7 @@ void InfraService::shutdown() {
     // Reverse order
     if (bus_) bus_->shutdown();
     if (runtime_) runtime_->stop();
-    logging_.shutdown();
+    if (logging_) logging_->shutdown();
 
     started_ = false;
 }
