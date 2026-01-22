@@ -41,6 +41,12 @@ std::error_code InfraService::init(const InfraConfig& cfg) {
 
     cfg_ = cfg;
 
+    auto cleanup_on_error = [this]() {
+        if (bus_) bus_->shutdown();
+        if (runtime_) runtime_->stop();
+        if (logging_) logging_->shutdown();
+    };
+
     // 1) Logging
     if (cfg_.enable_logging) {
         if (!logging_) logging_ = std::make_unique<LogManager>();
@@ -54,7 +60,10 @@ std::error_code InfraService::init(const InfraConfig& cfg) {
     // 3) Config (optional)
     if (!cfg_.config_path.empty()) {
         if (!config_) config_ = std::make_unique<ConfigManager>();
-        if (const auto ec = config_->load(cfg_.config_path)) return ec;
+        if (const auto ec = config_->load(cfg_.config_path)) {
+            cleanup_on_error();
+            return ec;
+        }
     }
 
     // 4) Bus
