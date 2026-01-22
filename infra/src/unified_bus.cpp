@@ -218,9 +218,27 @@ public:
 
     void shutdown() {
         shutdown_zmq();
-        // best-effort: clear in-process stream topics too
-        std::lock_guard<std::mutex> lock(stream_mutex_);
-        stream_topics_.clear();
+        // Best-effort: drain in-process stream queues to release payloads.
+        {
+            std::lock_guard<std::mutex> lock(stream_mutex_);
+            for (auto& [topic, topic_ptr] : stream_topics_) {
+                if (!topic_ptr) {
+                    continue;
+                }
+                std::lock_guard<std::mutex> t_lock(topic_ptr->mutex);
+                for (auto& queue : topic_ptr->queues) {
+                    if (!queue) {
+                        continue;
+                    }
+                    std::shared_ptr<void> item;
+                    while (queue->try_pop(item)) {
+                        item.reset();
+                    }
+                }
+                topic_ptr->queues.clear();
+            }
+            stream_topics_.clear();
+        }
 
         std::lock_guard<std::mutex> c_lock(control_mutex_);
         control_topics_.clear();
