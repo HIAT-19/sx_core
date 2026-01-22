@@ -24,7 +24,7 @@ target_link_libraries(sx_infra
         sx::utils
     PRIVATE
         Threads::Threads
-        libzmq
+        libzmq-static
         nlohmann_json::nlohmann_json
         asio
         spdlog::spdlog
@@ -40,5 +40,5 @@ add_sx_test(sx_infra_test
 target_link_libraries(sx_infra_test PRIVATE
     sx_infra
     Threads::Threads
-    libzmq
+    libzmq-static
 )
